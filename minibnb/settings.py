@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'e(_6-__8*moxi0qea3hrxrt5ucy2(8v)t9pa8+pdv$$b%ye3_l'
-
+MINIBNB_SECRET_KEY = '5a4550e5d6887f36a125c61980d36fb6dbb4b87d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'property',
     'user',
     'talk',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [
