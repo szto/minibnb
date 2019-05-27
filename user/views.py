@@ -1,4 +1,7 @@
-import requests, json, jwt
+import requests
+import json
+import jwt
+import logging
 
 from django.views import View
 from django.http import JsonResponse, HttpResponse
@@ -12,30 +15,33 @@ class KakaoSignupView(View):
     def post(self, request):
         try: 
             user_token = json.loads(request.body)['Authorization']
-
         except Exception as e:
-            print(e, "No Token information.")
+            logger.exception(e)
             return HttpResponse(status=500)
         else:
             kakao_user=self.get_kakao_user(user_token)
-            
             try:
-                user, is_created = User.objects.get_or_create(id_kakao=kakao_user['id'])
-                user.email = (kakao_user['email'] or None)
-                user.user_name = (kakao_user['nickname'] or None)
-                user.login_type = LoginType.KAKAO
-                user.save()
+                user, is_created = User.objects.get_or_create(kakao_id=kakao_user['kakao_id'])
+                if is_created == True:
+                    user.email = kakao_user.get('email', None)
+                    user.user_name = kakao_user.get('nickname', None)
+                    user.login_type = LoginType.KAKAO
+                    user.is_host = False
+                    user.save()
 
                 encoded = jwt.encode({'id':user.id}, MINIBNB_SECRET_KEY, algorithm='HS256')
-                return JsonResponse({
+                data = {
                         'access_token': encoded.decode('UTF-8'),
                         'is_host': user.is_host,
                         'is_created': is_created,
                         'user_info': kakao_user,
-                    })
+                    }
+
+                return JsonResponse(data)
 
             except Exception as e:
-                print(e, "Token is not accepted")
+                logging.exception("Error occured on /user/kakao")
+                return JsonResponse({"message":"에러가 발생했습니다."})
     
     @login_decorator
     def get(self, request):
@@ -51,20 +57,13 @@ class KakaoSignupView(View):
                     }
             kakao_response = requests.post(url, headers=headers, timeout=10).json()
             kakao_userinfo = {
-                        'id': kakao_response['id'],
+                        'kakao_id': kakao_response['id'],
                         'nickname' : kakao_response['properties']['nickname'],
                         'thumbnail_image' : kakao_response['properties']['thumbnail_image'],
-                        'email' : (kakao_response['kakao_account']['email'] or None) 
+                        'email' : kakao_response.get('kakao_account', None).get('email',None)
                     } 
             return kakao_userinfo
         except Exception as s:
-            print(s)
+            logging.exception("Error occured on /user/kakao, get_kakao_user method")
             return None 
 
-#페이스북 로그인 프론트엔드 커뮤니케이션 기다리는 중
-#class FacebookView(View):
-#    def POST(self, request):
-#        return HttpResponse(status=200)
-#    
-#    def get_facebook_user(self, user_token):
-#        url = ''

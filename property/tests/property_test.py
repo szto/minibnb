@@ -31,6 +31,9 @@ class PropertyTest(TestCase):
         test_user = User.objects.get(user_name="test")
         test_user.is_host = False
         encoded = self.getToken(test_user)
+        test_image=create_test_image()
+        print(test_image.getvalue())
+        print(MultipartEncoder({'picture':create_test_image()}))
 
         multipart_data = MultipartEncoder({
             'name'        : '선릉 근처 근사한 숙소',
