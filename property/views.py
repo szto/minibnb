@@ -3,7 +3,7 @@ import operator
 import boto3
 import logging
 import uuid
-
+import my_settings
 
 from datetime import datetime
 from django.shortcuts import render
@@ -51,7 +51,6 @@ class PropertyView(View):
         data = serializers.serialize('json', unbooked_properties)
         return HttpResponse(data, content_type='application/json')
       
-
 #디테일 화면
 class PropertyDetailView(View):
     
@@ -121,20 +120,23 @@ class PropertyCreateView(View):
         else:
             try:
                 new_property = Property(
-                                name = property_get.get('property_name'),
+                                name        = property_get.get('property_name'),
                                 description = property_get.get('description'),
-                                address1 = property_get.get('address1'),
-                                address2 = property_get.get('address2',None),
-                                postal = property_get.get('postal'),
-                                max_people = property_get.get('max_people'),
-                                price = property_get.get('price'),
-                                user_id = user.id
+                                address1    = property_get.get('address1'),
+                                address2    = property_get.get('address2',None),
+                                postal      = property_get.get('postal'),
+                                max_people  = property_get.get('max_people'),
+                                price       = property_get.get('price'),
+                                user_id     = user.id
                         )
                 new_property.save()
                 user.is_host = True
                 user.save()
+
             except Exception as e:
                 logger.exception(e)
+                return JsonResponse({'message':'숙소저장 시 오류가 생겼습니다.'}, status=400)
+
         self.photos_to_aws(request, new_property.id)
 
         data = {
@@ -147,8 +149,8 @@ class PropertyCreateView(View):
 
         s3_client = boto3.client(
             's3',
-            aws_access_key_id="AKIAYIKLX6WO7CB22LG4",
-            aws_secret_access_key ="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"
+            aws_access_key_id     = my_settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key = my_settings.AWS_SECRET_ACCESS_KEY
         )
         
         for key, image in request.FILES.items():
