@@ -1,4 +1,4 @@
-import json, jwt
+import jwt
 
 from django.test import TestCase, Client
 from user.models import User 
@@ -6,7 +6,7 @@ from minibnb.settings import MINIBNB_SECRET_KEY
 
 class UserTest(TestCase):
     def setUp(self):
-        test_user = User.objects.create(user_name="test" ,id_kakao=12345)
+        test_user = User.objects.create(user_name="test" ,kakao_id=12345)
 
     def test_user_login(self):
         c = Client()

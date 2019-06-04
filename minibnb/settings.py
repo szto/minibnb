@@ -26,14 +26,14 @@ MINIBNB_SECRET_KEY = '5a4550e5d6887f36a125c61980d36fb6dbb4b87d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['10.58.0.21', 'localhost']
+ALLOWED_HOSTS = [ '*', '10.58.5.2','localhost:8000','localhost','10.58.1.72:8000','10.58.1.72' ]
 
 
 # Application definition
 
 INSTALLED_APPS = [
-   'django.contrib.admin',
-   'django.contrib.auth',
+    'django.contrib.admin',
+    'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'property',
     'user',
     'talk',
-    'django_extensions'
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -52,9 +52,10 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'corsheaders.middleware.CorsMiddleware',
 #    'django.middleware.csrf.CsrfViewMiddleware',
-   'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware'
 ]
 
 ROOT_URLCONF = 'minibnb.urls'
@@ -126,8 +127,63 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-CORS_ORIGIN_ALLOW_ALL=True
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
 
+    'formatters': {
+        'format1': {
+            'format': '[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s',
+            'datefmt': '%d/%b/%Y %H:%M:%S'
+        },
+        'format2': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'myproject.log'),
+            'formatter': 'format1',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'format2',
+        }
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+        }
+    }
+}
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_METHODS = (
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+)
+
+CORS_ALLOW_HEADERS = (
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+)

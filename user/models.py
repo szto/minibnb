@@ -13,7 +13,7 @@ class User(models.Model):
     user_name = models.CharField(max_length=250)
     email = models.CharField(max_length=250)
     login_type = models.CharField(max_length=30, choices=LoginType.choices())
-    id_kakao = models.CharField(max_length=250, default=None)
+    kakao_id = models.CharField(max_length=250, default=None, null=True)
     is_host = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
