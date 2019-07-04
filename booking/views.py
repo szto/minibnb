@@ -16,6 +16,7 @@ class BookRequestView(View):
 
         check_in_date = request.POST.get['check_in_date']
         check_out_date = request.POST.get['check_out_date']
+        nights = check_out_date - check_in_date
 
         if self.property_occupied(property_id, check_in_date, check_out_date):
             return JsonResponse({'message':'예약이 이미 존재합니다.'}, status=400)
@@ -24,6 +25,7 @@ class BookRequestView(View):
             property = property_id,
             check_in_date = check_in_date,
             check_out_date = check_out_date,
+            nights = nights,
             booking_date = datetime.now(),
             booking_status = WAITING
         )
