@@ -20,7 +20,6 @@ class User(models.Model):
     status = models.BooleanField(default=True)
 
     class Meta:
-
         db_table='users'
 
     def __str__(self):

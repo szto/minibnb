@@ -66,4 +66,3 @@ class KakaoSignupView(View):
         except Exception as s:
             logging.exception("Error occured on /user/kakao, get_kakao_user method")
             return None 
-
